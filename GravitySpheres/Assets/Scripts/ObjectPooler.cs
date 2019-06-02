@@ -7,7 +7,6 @@ public class ObjectPooler : MonoBehaviour
     public List<Pool> Pools;
 
     public List<List<GameObject>> PooledObjectsList;
-    public List<GameObject> PooledObjects;
     private List<int> Positions { get; } = new List<int>();
 
     public List<GameObject> GetEntirePool(int index)
@@ -18,10 +17,10 @@ public class ObjectPooler : MonoBehaviour
     public GameObject GetNextPooled(int poolIndex, Vector3 position, Quaternion rotation)
     {
         var obj = GetNextPooled(poolIndex);
-        obj.SetActive(true);
+        obj.GetComponent<IPoolable>()?.ResetState();
         obj.transform.position = position;
         obj.transform.rotation = rotation;
-        obj.GetComponent<IPoolable>()?.ResetState();
+        obj.SetActive(true);
 
         return obj;
     }
@@ -46,7 +45,6 @@ public class ObjectPooler : MonoBehaviour
         Instance = this;
 
         PooledObjectsList = new List<List<GameObject>>();
-        PooledObjects = new List<GameObject>();
 
         foreach (Pool pool in Pools)
         {
@@ -56,15 +54,15 @@ public class ObjectPooler : MonoBehaviour
 
     private void PreparePool(Pool pool)
     {
-        PooledObjects = new List<GameObject>();
+        var pooledObjects = new List<GameObject>();
         for (int i = 0; i < pool.Size; i++)
         {
             GameObject obj = Instantiate(pool.Prefab);
             obj.SetActive(false);
             obj.transform.parent = transform;
-            PooledObjects.Add(obj);
+            pooledObjects.Add(obj);
         }
-        PooledObjectsList.Add(PooledObjects);
+        PooledObjectsList.Add(pooledObjects);
         Positions.Add(0);
     }
 

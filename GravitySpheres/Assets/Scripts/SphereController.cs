@@ -22,15 +22,13 @@ public class SphereController : MonoBehaviour
             }
             uiTextRefresher.Refresh($"{Spheres.Count:D3}");
         }
+        sphere.IsInitialized = false;
         sphere.gameObject.SetActive(false);
     }
 
     public void AddSphere(Sphere sphere)
     {
-        if (!Spheres.Contains(sphere))
-        {
-            Spheres.Add(sphere);
-        }
+        Spheres.Add(sphere);
         uiTextRefresher.Refresh($"{Spheres.Count:D3}");
     }
 
