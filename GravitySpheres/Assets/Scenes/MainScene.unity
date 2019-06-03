@@ -207,11 +207,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4dcf1c1bb9ddb7447839d208a9dc6e81, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Pools:
-  - Tag: Spheres
-    Prefab: {fileID: 8917117420983664425, guid: 9a5ed116cd3ff9242a823eb226085d75,
+  pools:
+  - Prefab: {fileID: 8917117420983664425, guid: 9a5ed116cd3ff9242a823eb226085d75,
       type: 3}
-    Size: 20
+    Size: 30
     Expandable: 1
 --- !u!4 &105817921
 Transform:
@@ -509,7 +508,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   uiTextRefresher: {fileID: 1552977936}
-  sphereLimit: 250
 --- !u!4 &1204848962
 Transform:
   m_ObjectHideFlags: 0
@@ -550,7 +548,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d26c316889e4225498d44042c3d7e0e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HeightLimit: 5
   ground: {fileID: 1647319437}
 --- !u!1 &1552977932
 GameObject:

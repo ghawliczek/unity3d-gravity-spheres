@@ -2,6 +2,9 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+/// <summary>
+/// Controls lifecycle of <see cref="Sphere"/> objects
+/// </summary>
 public class SphereController : MonoBehaviour
 {
     [SerializeField]
@@ -10,7 +13,7 @@ public class SphereController : MonoBehaviour
     public List<Sphere> Spheres { get; } = new List<Sphere>();
     private WaitForSeconds QuarterSecond { get; } = new WaitForSeconds(0.25f);
     private int SphereLimit { get; } = 250;
-    private SphereSpawner SphereSpawner { get; set; }
+    private PooledObjectsSpawner SphereSpawner { get; set; }
 
     public void DestroySphere(Sphere sphere, bool shouldRemoveFromList = true)
     {
@@ -43,7 +46,7 @@ public class SphereController : MonoBehaviour
     private void Awake()
     {
         Instance = this;
-        SphereSpawner = GetComponent<SphereSpawner>();
+        SphereSpawner = GetComponent<PooledObjectsSpawner>();
     }
 
     private void Start()

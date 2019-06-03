@@ -1,5 +1,8 @@
 ﻿using UnityEngine;
 
+/// <summary>
+/// Provides random spawn position based on the size of the ground
+/// </summary>
 public class SpawnPositionProvider : MonoBehaviour
 {
     [SerializeField]

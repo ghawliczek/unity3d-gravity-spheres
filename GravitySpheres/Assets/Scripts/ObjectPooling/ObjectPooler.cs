@@ -10,6 +10,9 @@ public class ObjectPooler : MonoBehaviour
     public static ObjectPooler Instance { get; private set; }
     private List<int> Positions { get; } = new List<int>();
 
+    /// <summary>
+    /// Returns next available <see cref="GameObject"/> from <see cref="Pool"/> at given index
+    /// </summary>
     public GameObject GetNextPooled(int poolIndex, Vector3 position, Quaternion rotation)
     {
         var obj = GetNextPooled(poolIndex);
@@ -21,6 +24,10 @@ public class ObjectPooler : MonoBehaviour
         return obj;
     }
 
+    /// <summary>
+    /// Creates new <see cref="Pool"/> at runtime
+    /// </summary>
+    /// <returns>Created pool index</returns>
     public int CreateNewPool(GameObject prefab, int size = 3, bool expandable = true)
     {
         Pool pool = new Pool
