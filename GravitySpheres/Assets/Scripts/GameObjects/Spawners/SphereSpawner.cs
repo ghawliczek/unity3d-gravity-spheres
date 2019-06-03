@@ -6,7 +6,7 @@ public class SphereSpawner : MonoBehaviour
     private SpawnPositionProvider positionProvider;
     [SerializeField]
     private int poolIndex;
-    private ObjectPooler pooler;
+    private ObjectPooler Pooler { get; set; }
 
     public GameObject Spawn()
     {
@@ -15,11 +15,11 @@ public class SphereSpawner : MonoBehaviour
 
     public GameObject Spawn(Vector3 position)
     {
-        return pooler.GetNextPooled(poolIndex, position, Quaternion.identity);
+        return Pooler.GetNextPooled(poolIndex, position, Quaternion.identity);
     }
 
-    private void Start()
+    private void OnEnable()
     {
-        pooler = ObjectPooler.Instance;
+        Pooler = ObjectPooler.Instance;
     }
 }

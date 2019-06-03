@@ -332,7 +332,7 @@ Camera:
   m_Enabled: 1
   serializedVersion: 2
   m_ClearFlags: 2
-  m_BackGroundColor: {r: 0.2753649, g: 0.4177544, b: 0.6415094, a: 0}
+  m_BackGroundColor: {r: 0.2924528, g: 0.2924528, b: 0.2924528, a: 0}
   m_projectionMatrixMode: 1
   m_SensorSize: {x: 36, y: 24}
   m_LensShift: {x: 0, y: 0}
@@ -348,7 +348,7 @@ Camera:
   far clip plane: 1000
   field of view: 60
   orthographic: 1
-  orthographic size: 5
+  orthographic size: 7
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -510,7 +510,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   uiTextRefresher: {fileID: 1552977936}
   sphereLimit: 250
-  poolName: Spheres
 --- !u!4 &1204848962
 Transform:
   m_ObjectHideFlags: 0
@@ -538,7 +537,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   positionProvider: {fileID: 1204848964}
-  poolName: Spheres
+  poolIndex: 0
 --- !u!114 &1204848964
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -673,7 +672,7 @@ MeshCollider:
   m_GameObject: {fileID: 1647319433}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 3
   m_Convex: 0
   m_CookingOptions: 14
@@ -731,7 +730,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1647319433}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: -15, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}

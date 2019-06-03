@@ -4,82 +4,85 @@ using UnityEngine;
 
 public class Sphere : MonoBehaviour, IPoolable
 {
-    public bool ReversePullForce = false;
-    public float GravityAcceleration { get; set; } = 1;
-    public int CollidesCounter { get; set; } = 1;
-    public float InitialMass { get; set; } = 0.1666667f;
+    public bool ReversePullForce { get; set; } = false;
+    public int CollisionsCounter { get; set; } = 1;
+    public float GravityAcceleration { get; } = 1;
+    public float InitialMass { get; } = 0.1666667f;
     private Rigidbody Rigidbody { get; set; }
     private Renderer Renderer { get; set; }
 
     public void TemporarilyDisableCollision()
     {
-        StartCoroutine(DisableCollisionRoutine());
+        StartCoroutine(TemporarilyDisableCollisionRoutine());
     }
 
     public void DoHighSpeedShoot()
     {
-        Rigidbody.AddForce(new Vector3(Random.Range(-1f, 1f), Random.Range(0.01f, 1f), Random.Range(-1f, 1f)) * 250);
+        Rigidbody.AddForce(new Vector3(Random.Range(-1f, 1f), Random.Range(-1f, 1f), Random.Range(-1f, 1f)) * 250);
     }
 
     public void ResetState()
     {
+        CollisionsCounter = 1;
         Rigidbody.velocity = Vector3.zero;
-        Rigidbody.mass = InitialMass;
+        Rigidbody.mass = 4f / 3f * Mathf.Pow(0.5f, 3);
         transform.localScale = Vector3.one * 0.5f;
         GetComponent<SphereCollider>().enabled = true;
     }
 
-    private void OnEnable()
+    private void Awake()
     {
         Rigidbody = GetComponent<Rigidbody>();
         Renderer = GetComponent<MeshRenderer>();
     }
 
-    private void FixedUpdate()
+    private void Update()
     {
-        Pull();
         if (!Renderer.IsVisibleFrom(Camera.main))
         {
             SphereController.Instance.DestroySphere(this, shouldRemoveFromList: false);
         }
     }
 
-    private void OnCollisionEnter(Collision collision)
+    private void FixedUpdate()
     {
-        if (Rigidbody == null || collision.rigidbody == null) return;
+        DoGravityPull();
+    }
 
-        if (collision.rigidbody.mass == Rigidbody.mass && collision.transform.position.y > transform.position.y
-            || collision.rigidbody.mass > Rigidbody.mass)
+    private void OnTriggerEnter(Collider other)
+    {
+        if (Rigidbody == null) return;
+
+        var otherCollisionsCounter = other.transform.GetComponent<Sphere>().CollisionsCounter;
+
+        if (ShouldPreserveOther(other))
         {
             SphereController.Instance.DestroySphere(this);
             return;
         }
 
-        var collisionCollidesCounter = collision.transform.GetComponent<Sphere>().CollidesCounter;
-        var mass = Rigidbody.mass;
-        Rigidbody.mass = 4f / 3f * Mathf.Pow(0.5f * Mathf.Sqrt(CollidesCounter + collisionCollidesCounter), 3);
-        if (mass > Rigidbody.mass)
-        {
-            Debug.LogError("XDD");
-        }
-        transform.localScale = Vector3.one * (0.5f * Mathf.Sqrt(CollidesCounter + collisionCollidesCounter));
-
-        CollidesCounter++;
+        Rigidbody.mass = 4f / 3f * Mathf.Pow(0.5f * Mathf.Sqrt(CollisionsCounter + otherCollisionsCounter), 3);
+        transform.localScale = Vector3.one * (0.5f * Mathf.Sqrt(CollisionsCounter + otherCollisionsCounter));
+        CollisionsCounter += otherCollisionsCounter;
 
         if (Rigidbody.mass >= 50 * InitialMass)
         {
-            Debug.Log(Rigidbody.mass);
-            Debug.Log(CollidesCounter);
             SphereController.Instance.BlowSphere(this);
         }
     }
 
-    private void Pull()
+    private bool ShouldPreserveOther(Collider collider)
     {
-        foreach (var sphere in SphereController.Instance.Spheres.Where(b => b != this && b.enabled))
+        var colliderRigidbody = collider.gameObject.GetComponent<Rigidbody>();
+        return colliderRigidbody.mass == Rigidbody.mass && collider.transform.position.y > transform.position.y
+            || colliderRigidbody.mass > Rigidbody.mass;
+    }
+
+    private void DoGravityPull()
+    {
+        foreach (var sphere in SphereController.Instance.Spheres)
         {
             Rigidbody rbToPull = sphere.Rigidbody;
-
             Vector3 pullDirection = Rigidbody.position - rbToPull.position;
 
             if (pullDirection.magnitude == 0) return;
@@ -91,7 +94,7 @@ public class Sphere : MonoBehaviour, IPoolable
         }
     }
 
-    private IEnumerator DisableCollisionRoutine()
+    private IEnumerator TemporarilyDisableCollisionRoutine()
     {
         var collider = GetComponent<SphereCollider>();
         collider.enabled = false;

@@ -3,16 +3,12 @@ using UnityEngine;
 
 public class ObjectPooler : MonoBehaviour
 {
+    [SerializeField]
+    private List<Pool> pools;
+    [SerializeField]
+    private List<List<GameObject>> pooledObjectsList;
     public static ObjectPooler Instance { get; private set; }
-    public List<Pool> Pools;
-
-    public List<List<GameObject>> PooledObjectsList;
     private List<int> Positions { get; } = new List<int>();
-
-    public List<GameObject> GetEntirePool(int index)
-    {
-        return PooledObjectsList[index];
-    }
 
     public GameObject GetNextPooled(int poolIndex, Vector3 position, Quaternion rotation)
     {
@@ -33,8 +29,8 @@ public class ObjectPooler : MonoBehaviour
             Size = size,
             Expandable = expandable
         };
-        int poolIndex = Pools.Count;
-        Pools.Add(pool);
+        int poolIndex = pools.Count;
+        pools.Add(pool);
         PreparePool(pool);
 
         return poolIndex;
@@ -43,10 +39,9 @@ public class ObjectPooler : MonoBehaviour
     private void Awake()
     {
         Instance = this;
+        pooledObjectsList = new List<List<GameObject>>();
 
-        PooledObjectsList = new List<List<GameObject>>();
-
-        foreach (Pool pool in Pools)
+        foreach (Pool pool in pools)
         {
             PreparePool(pool);
         }
@@ -62,28 +57,28 @@ public class ObjectPooler : MonoBehaviour
             obj.transform.parent = transform;
             pooledObjects.Add(obj);
         }
-        PooledObjectsList.Add(pooledObjects);
+        pooledObjectsList.Add(pooledObjects);
         Positions.Add(0);
     }
 
     private GameObject GetNextPooled(int poolIndex)
     {
-        int poolSize = PooledObjectsList[poolIndex].Count;
+        int poolSize = pooledObjectsList[poolIndex].Count;
         for (int i = Positions[poolIndex] + 1; i < Positions[poolIndex] + poolSize; i++)
         {
-            if (!PooledObjectsList[poolIndex][i % poolSize].activeInHierarchy)
+            if (!pooledObjectsList[poolIndex][i % poolSize].activeInHierarchy)
             {
                 Positions[poolIndex] = i % poolSize;
-                return PooledObjectsList[poolIndex][i % poolSize];
+                return pooledObjectsList[poolIndex][i % poolSize];
             }
         }
 
-        if (Pools[poolIndex].Expandable)
+        if (pools[poolIndex].Expandable)
         {
-            GameObject obj = Instantiate(Pools[poolIndex].Prefab);
+            GameObject obj = Instantiate(pools[poolIndex].Prefab);
             obj.SetActive(false);
             obj.transform.parent = transform;
-            PooledObjectsList[poolIndex].Add(obj);
+            pooledObjectsList[poolIndex].Add(obj);
             return obj;
         }
 

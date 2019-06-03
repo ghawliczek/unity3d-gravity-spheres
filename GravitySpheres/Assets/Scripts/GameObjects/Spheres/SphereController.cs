@@ -4,29 +4,25 @@ using UnityEngine;
 
 public class SphereController : MonoBehaviour
 {
-    public UiTextRefresher uiTextRefresher;
-    public int sphereLimit = 250;
+    [SerializeField]
+    private UiTextRefresher uiTextRefresher;
     public static SphereController Instance { get; private set; }
     public List<Sphere> Spheres { get; } = new List<Sphere>();
     private WaitForSeconds QuarterSecond { get; } = new WaitForSeconds(0.25f);
+    private int SphereLimit { get; } = 250;
     private SphereSpawner SphereSpawner { get; set; }
-
 
     public void DestroySphere(Sphere sphere, bool shouldRemoveFromList = true)
     {
         if (shouldRemoveFromList)
         {
-            if (Spheres.Contains(sphere))
-            {
-                Spheres.Remove(sphere);
-            }
+            Spheres.Remove(sphere);
             uiTextRefresher.Refresh($"{Spheres.Count:D3}");
         }
-        sphere.IsInitialized = false;
         sphere.gameObject.SetActive(false);
     }
 
-    public void AddSphere(Sphere sphere)
+    public void StoreSphere(Sphere sphere)
     {
         Spheres.Add(sphere);
         uiTextRefresher.Refresh($"{Spheres.Count:D3}");
@@ -34,17 +30,17 @@ public class SphereController : MonoBehaviour
 
     public void BlowSphere(Sphere sphere)
     {
-        for (int i = 0; i < sphere.CollidesCounter; i++)
+        for (int i = 0; i < sphere.CollisionsCounter; i++)
         {
             var spawnedSphere = SphereSpawner.Spawn(sphere.transform.position).GetComponent<Sphere>();
             spawnedSphere.TemporarilyDisableCollision();
             spawnedSphere.DoHighSpeedShoot();
-            AddSphere(spawnedSphere);
+            StoreSphere(spawnedSphere);
         }
         DestroySphere(sphere);
     }
 
-    private void OnEnable()
+    private void Awake()
     {
         Instance = this;
         SphereSpawner = GetComponent<SphereSpawner>();
@@ -57,7 +53,7 @@ public class SphereController : MonoBehaviour
 
     private IEnumerator SphereRoutine()
     {
-        while (Spheres.Count < sphereLimit)
+        while (Spheres.Count < SphereLimit)
         {
             var newSphere = SphereSpawner.Spawn().GetComponent<Sphere>();
             Spheres.Add(newSphere);

@@ -2,9 +2,9 @@
 
 public class SpawnPositionProvider : MonoBehaviour
 {
-    public float HeightLimit = 5.0f;
     [SerializeField]
     private Transform ground;
+    public float HeightLimit { get; } = 5.0f;
     private Vector3 GroundSize { get; set; }
 
     public Vector3 Provide()
@@ -14,7 +14,7 @@ public class SpawnPositionProvider : MonoBehaviour
                            Random.Range(-GroundSize.z / 2, GroundSize.z / 2));
     }
 
-    private void Start()
+    private void OnEnable()
     {
         GroundSize = ground.GetComponent<MeshRenderer>().bounds.size;
     }
