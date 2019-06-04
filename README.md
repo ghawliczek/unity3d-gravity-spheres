@@ -1,7 +1,7 @@
 # unity3d-gravity-spheres
 This repository contains recruitment task that focuses on implementation of gravity and object pooling.
 
-## Requirements:
+## Task requirements:
 * every quarter of a second, new sphere is spawned in the camera's field of view
 * text in the upper right corner shows how many spheres have been spawned so far
 * each sphere has it's own gravity field and attracts other spheres
